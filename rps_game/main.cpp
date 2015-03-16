@@ -19,6 +19,9 @@
 
 #include <iostream>
 #include <algorithm>
+#include <string>
+
+using namespace std;
 
 /*!
  * \brief The Level enum
@@ -31,24 +34,25 @@ enum Level
     HARD
 };
 
-const std::string cArgKeyLevel = "--level";
-const std::string cArgKeyVersion = "--version";
+const string cArgKeyLevel = "--level";
+const string cArgKeyVersion = "--version";
 
-const std::string cLevelStringEasy = "easy";
-const std::string cLevelStringNormal = "normal";
-const std::string cLevelStringHard = "hard";
+const string cLevelStringEasy = "easy";
+const string cLevelStringNormal = "normal";
+const string cLevelStringHard = "hard";
+const string cVersionNumer = "1.0.0";
 
 /*!
  * \brief showHelp
  */
 void showHelp()
 {
-    std::cout << "Usage:" << std::endl;
-    std::cout << "  rps_game [options]" << std::endl;
-    std::cout << "      --level (EASY|NORMAL|HARD)" << std::endl;
-    std::cout << "          specify game difficulty (argument is required)" << std::endl;
-    std::cout << "      --version" << std::endl;
-    std::cout << "          output programm version" << std::endl;
+    cout << "Usage:" << endl;
+    cout << "  rps_game [options]" << endl;
+    cout << "      --level (EASY|NORMAL|HARD)" << endl;
+    cout << "          specify game difficulty (argument is required)" << endl;
+    cout << "      --version" << endl;
+    cout << "          output programm version" << endl;
 }
 
 /*!
@@ -56,11 +60,11 @@ void showHelp()
  * \param levelString
  * \return
  */
-Level parseLevel(std::string levelString)
+Level parseLevel(string levelString)
 {
     Level rLevel = UNSPECIFIED;
 
-    std::transform(levelString.begin(), levelString.end(), levelString.begin(), ::tolower);
+    transform(levelString.begin(), levelString.end(), levelString.begin(), ::tolower);
 
     if (cLevelStringEasy == levelString)
     {
@@ -85,14 +89,14 @@ Level parseLevel(std::string levelString)
  * \param argName
  * \return
  */
-int findArgPosition(int argc, char* argv[], const std::string &argName)
+int findArgPosition(int argc, char* argv[], const string &argName)
 {
     int rPosition = -1;
 
     for (int argIndex = 1; argIndex < argc; ++argIndex)
     {
-        std::string nextArg = argv[argIndex];
-        std::transform(nextArg.begin(), nextArg.end(), nextArg.begin(), ::tolower);
+        string nextArg = argv[argIndex];
+        transform(nextArg.begin(), nextArg.end(), nextArg.begin(), ::tolower);
 
         if (argName == nextArg)
         {
@@ -110,21 +114,34 @@ int findArgPosition(int argc, char* argv[], const std::string &argName)
  * \param argName
  * \return
  */
-std::string stringArg(int argc, char* argv[], std::string argName)
+string stringArg(int argc, char* argv[], string argName)
 {
-    std::string result;
+    string result;
 
     int argIndex = findArgPosition(argc, argv, argName);
-
     if (-1 != argIndex)
     {
-        if (argIndex + 1 < argc)
+
+        if ((argIndex + 1) < argc)
         {
+
             result = argv[argIndex + 1];
+
         }
     }
 
     return result;
+}
+bool findVersion(int argc, char* argv[])
+{
+
+    int argIndex = findArgPosition(argc, argv, "--version");
+    if (-1 != argIndex)
+    {
+        cout << "Version number is " << cVersionNumer << endl;
+        return true;
+    }
+    return false;
 }
 
 /*!
@@ -141,13 +158,19 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    //Parse version
+    bool exitProgramm = findVersion(argc, argv);
+    if (exitProgramm)
+        return 0;
+
     // Parse level
     Level level = UNSPECIFIED;
+    string levelStr = stringArg(argc, argv, cArgKeyLevel);
 
-    std::string levelStr = stringArg(argc, argv, cArgKeyLevel);
     if (!levelStr.empty())
     {
         level = parseLevel(levelStr);
+        cout << "You selected "<< levelStr << "!" <<endl;
     }
 
     if (UNSPECIFIED == level)
@@ -155,9 +178,6 @@ int main(int argc, char* argv[])
         showHelp();
         return 1;
     }
-
-    std::cout << level << std::endl;
-
     return 0;
 }
 
