@@ -286,14 +286,15 @@ int main(int argc, char* argv[])
     if (!levelStr.empty())
     {
         level = parseLevel(levelStr);
+        if (UNSPECIFIED == level)
+        {
+            showHelp();
+            return 1;
+        }
         cout << "You selected "<< levelStr << "!" <<endl;
     }
 
-    if (UNSPECIFIED == level)
-    {
-        showHelp();
-        return 1;
-    }
+
 
     string playerChoise;
     int it = 0;
