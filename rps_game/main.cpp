@@ -143,6 +143,27 @@ bool findVersion(int argc, char* argv[])
     }
     return false;
 }
+bool ParseArgs (int argc, char* argv[])
+{
+    int count = 1;
+    for(int i = 1; i < argc; i++)
+    {
+        if(argv[i] == cArgKeyLevel)
+        {
+            count +=2;
+
+
+        }
+        if(argv[i] == cArgKeyVersion)
+        {
+            count++;
+
+        }
+
+    }
+
+    return (argc == count)? false : true;
+}
 
 /*!
  * \brief main
@@ -158,6 +179,12 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    bool Permission = ParseArgs(argc, argv);
+    if(Permission)
+    {
+        cerr << "Wrong parametrs" << endl;
+        return -1;
+    }
     //Parse version
     bool exitProgramm = findVersion(argc, argv);
     if (exitProgramm)
