@@ -47,6 +47,8 @@ const string cLevelStringHard = "hard";
 const string rock = "rock";
 const string scissors = "scissors";
 const string paper = "paper";
+const string lizard = "lizard";
+const string spok = "spok";
 
 const string cVersionNumer = "1.0.0";
 
@@ -177,25 +179,27 @@ enum GameParams
 {
     ERROR = -1,
     ROCK = 0,
-    SCISSORS,
     PAPER,
+    SCISSORS,
+    SPOK,
+    LIZARD,
     Length
 };
 void printResult(int result)
 {
-    if( result > 0)
+    if( result < 0)
         if( result % 2 == 0)
-            cout << "You win" << endl;
+            cout << "You win" << endl << endl;
         else
-            cout << "CPU win" << endl;
-    else if( result < 0)
+            cout << "CPU win" << endl << endl;
+    else if( result > 0)
         if( result % 2 != 0)
-            cout << "You win" << endl;
+            cout << "You win" << endl << endl;
         else
-            cout << "CPU win" << endl;
+            cout << "CPU win" << endl << endl;
     else if( result == 0)
         if( result % 2 == 0)
-            cout << "TIE" << endl;
+            cout << "TIE" << endl << endl;
 }
 GameParams choiseFromString(string playerChoise)
 {
@@ -206,14 +210,16 @@ GameParams choiseFromString(string playerChoise)
         return SCISSORS;
     else if(paper == playerChoise)
         return PAPER;
+    else if(lizard == playerChoise)
+        return LIZARD;
+    else if(spok == playerChoise)
+        return SPOK;
     else
     {
-        if("exit" != playerChoise)
-            cout << "Bad input... Please, try again (rock | scissors | paper)" << endl << endl;
         return ERROR;
     }
 }
-int GencpuChoise(Level level)
+int GencpuChoise(Level level, GameParams pChoise)
 {
     int cpuChoise;
     if(level == EASY)
@@ -226,16 +232,30 @@ int GencpuChoise(Level level)
         cpuChoise = rand()% Length;
 
     }
-    else
+    else if (level == HARD)
     {
-        cout << "Sorry, but this level is not implemented yet" << endl;
-        return -1;
+        int probability = rand() % 6;
+
+        if(probability >= 1)
+        {
+            cpuChoise = pChoise + 1;
+            if(cpuChoise == Length)
+                cpuChoise = ERROR + 1;
+
+        }
+        else
+        {
+            cout <<"woops... something go wrong" << endl;
+            cpuChoise = rand()% Length;
+        }
     }
     switch(cpuChoise)
     {
         case ROCK: cout << "CPU choose ROCK" << endl << endl; break;
         case SCISSORS: cout << "CPU choose SCISSORS" << endl << endl; break;
         case PAPER: cout << "CPU choose PAPER" << endl << endl; break;
+        case LIZARD: cout << "CPU choose LIZARD" << endl << endl; break;
+        case SPOK: cout << "CPU choose SPOK" << endl << endl; break;
     }
     return cpuChoise;
 }
@@ -245,7 +265,7 @@ void gameEngine(GameParams pChoise, Level level)
     if(pChoise == ERROR)
         return;
 
-    int cpuChoise = GencpuChoise(level);
+    int cpuChoise = GencpuChoise(level, pChoise);
     if(cpuChoise == ERROR)
         return;
     int result = (pChoise - cpuChoise) % Length;
@@ -301,7 +321,7 @@ int main(int argc, char* argv[])
     while(playerChoise != "exit" && it < 3)
     {
 
-        cout << "Please, select your choise (rock | scissors | paper) or type exit to quit" << endl << endl;
+        cout << "Please, select your choise (rock | scissors | paper| lizard| spok) or type exit to quit" << endl << endl;
         cin >> playerChoise;
         gameEngine(choiseFromString(playerChoise), level);
         it++;
